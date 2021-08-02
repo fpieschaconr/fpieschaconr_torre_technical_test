@@ -1,11 +1,12 @@
 import React from "react";
 import { Switch, Route, Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
+import "antd/dist/antd.css";
+import UserSearchBox from "./components/UserSearchBox";
 
 function App() {
   return (
     <div className="App">
-      Hello World.
+      <UserSearchBox />
     </div>
   );
 }
