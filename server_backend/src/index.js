@@ -1,24 +1,24 @@
-import app from "./server.js"
-import mongodb from "mongodb"
-import dotenv from "dotenv"
-dotenv.config()
-const MongoClient = mongodb.MongoClient
+import app from "./server.js";
+import mongodb from "mongodb";
+import dotenv from "dotenv";
+import JobStatsDAO from "./dao/JobStatsDAO.js";
+import UserStatsDAO from "./dao/UserStatsDAO.js";
 
-const port = process.env.PORT || 8000
+dotenv.config();
+const client = await new mongodb.MongoClient(process.env.TORRETEST_DB_URI);
 
-MongoClient.connect(
-    process.env.TORRETEST_DB_URI,
-    {
-        maxPoolSize: 50,
-        wtimeoutMS: 2500,
-    }
-)
-.catch(err => {
-    console.error(err.stack)
-    process.exit(1)
-})
-.then(async client => {
+const port = process.env.PORT || 8000;
+
+client
+  .connect()
+  .catch((err) => {
+    console.error(err.stack);
+    process.exit(1);
+  })
+  .then(async (client) => {
+    await JobStatsDAO.injectDB(client);
+    await UserStatsDAO.injectDB(client);
     app.listen(port, () => {
-        console.log(`listening on port ${port}`)
-    })
-})
+      console.log(`listening on port ${port}`);
+    });
+  });
