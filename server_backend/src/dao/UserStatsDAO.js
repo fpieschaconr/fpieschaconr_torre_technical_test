@@ -48,4 +48,31 @@ export default class UserStatsDAO {
       return { error: e };
     }
   }
+
+  static async getUserStats(filters = null) {
+    let query;
+    if (filters) {
+      let obj = filters.find((o) => o.key === "category");
+      if (obj) {
+        query = { category: { $eq: obj.value } };
+      }
+    }
+
+    let cursor;
+
+    try {
+      cursor = await userStats.find(query);
+    } catch (e) {
+      console.error(`Unable to issue find command, ${e}`);
+      return [];
+    }
+
+    try {
+      const userStatsList = await cursor.toArray();
+      return userStatsList;
+    } catch (e) {
+      console.error(`Unable to convert cursor to array, ${e}`);
+      return [];
+    }
+  }
 }

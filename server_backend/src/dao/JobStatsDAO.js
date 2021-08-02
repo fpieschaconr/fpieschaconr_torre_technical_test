@@ -47,4 +47,33 @@ export default class JobStatsDAO {
       return { error: e };
     }
   }
+
+  static async getJobStats(filters = null) {
+    let query;
+    if (filters) {
+      let obj = filters.find((o) => o.key === "category");
+      if (obj) {
+        query = { category: { $eq: obj.value } };
+      }
+    }
+
+    let cursor;
+
+    try {
+      cursor = await jobStats.find(query);
+    } catch (e) {
+      console.error(`Unable to issue find command, ${e}`);
+      return [];
+    }
+
+    try {
+      const jobStatsList = await cursor.toArray();
+      return jobStatsList;
+    } catch (e) {
+      console.error(
+        `Unable to convert cursor to array or problem counting documents, ${e}`
+      );
+      return [];
+    }
+  }
 }
